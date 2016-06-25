@@ -1,5 +1,6 @@
 ﻿using Foundation;
 using UIKit;
+using CoreGraphics;
 
 namespace MovieList
 {
@@ -20,6 +21,11 @@ namespace MovieList
 		{
 			// Override point for customization after application launch.
 			// If not required for your application you can safely delete this method
+
+			Window = new UIWindow(new CGRect(0, 0, UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height));
+			Window.RootViewController = new MasterViewController();
+			Window.MakeKeyAndVisible();
+			UIView.Transition(Window, 0.3, UIViewAnimationOptions.TransitionCrossDissolve, null, null);
 
 			return true;
 		}
