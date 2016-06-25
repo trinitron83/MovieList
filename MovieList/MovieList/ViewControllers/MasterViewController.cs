@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using UIKit;
 using Foundation;
 using CoreGraphics;
@@ -10,11 +10,17 @@ namespace MovieList
 {
 	public class MasterViewController : UIViewController
 	{
-		MovieListResponse Movies;
+		List<MovieListResponse> Movies;
+		List<string> APIUrls;
 
 		public MasterViewController()
 		{
-			Movies = new MovieListResponse();
+			APIUrls = new List<string> { 
+				"http://api.themoviedb.org/3/movie/now_playing?api_key=ab41356b33d100ec61e6c098ecc92140&sort_by=popularity.des", 
+				"http://api.themoviedb.org/3/movie/top_rated?api_key=ab41356b33d100ec61e6c098ecc92140&sort_by=popularity.des",
+				"http://api.themoviedb.org/3/movie/popular?api_key=ab41356b33d100ec61e6c098ecc92140&sort_by=popularity.des",
+			};
+			Movies = new List<MovieListResponse>();
 		}
 
 		public override async void ViewDidLoad()
@@ -23,21 +29,22 @@ namespace MovieList
 
 			await GetMovies();
 
-			int rowOffset = 0;
+			double rowOffset = 0;
 			double posterWidth = UIScreen.MainScreen.Bounds.Width/3;
-			int posterHeight = 200;
+			double posterHeight = UIScreen.MainScreen.Bounds.Height/3;
 
 			var verticalScroll = new UIScrollView(new CGRect(0, 0, UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height));
+			verticalScroll.ContentSize = new CGSize(UIScreen.MainScreen.Bounds.Width, posterHeight * APIUrls.Count);
 
-			for (int i = 0; i < 5; i++)
+			foreach (MovieListResponse response in Movies)
 			{
 				var row = new UIScrollView(new CGRect(0, rowOffset, UIScreen.MainScreen.Bounds.Width, posterHeight));
-				row.ContentSize = new CGSize(UIScreen.MainScreen.Bounds.Width * 3, 50);
+				row.ContentSize = new CGSize(UIScreen.MainScreen.Bounds.Width * response.results.Count, posterHeight);
 				row.PagingEnabled = true;
 
 				double posterOffset = 0;
 
-				foreach (Movie m in Movies.results)
+				foreach (Movie m in response.results)
 				{
 					if (!string.IsNullOrEmpty(m.poster_path))
 					{
@@ -75,7 +82,10 @@ namespace MovieList
 
 		async Task GetMovies()
 		{
-			Movies = await new API().SendGetRequest<MovieListResponse>("http://api.themoviedb.org/3/movie/now_playing?api_key=ab41356b33d100ec61e6c098ecc92140&sort_by=popularity.des");
+			foreach (string url in APIUrls)
+			{
+				Movies.Add(await new API().SendGetRequest<MovieListResponse>(url));
+			}
 		}
 	}
 }
