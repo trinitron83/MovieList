@@ -121,12 +121,16 @@
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewControllers\MasterViewController.cs" />
+    <Compile Include="ViewControllers\MovieDetailController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MovieListPCL\MovieListPCL.csproj">
       <Project>{72208833-1230-4716-987D-098327D55AF3}</Project>
       <Name>MovieListPCL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\PS_X.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

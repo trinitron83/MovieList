@@ -10,6 +10,9 @@ namespace MovieList
 	public class AppDelegate : UIApplicationDelegate
 	{
 		// class-level declarations
+		public static double ScreenHeight;
+
+		public static double ScreenWidth;
 
 		public override UIWindow Window
 		{
@@ -21,8 +24,10 @@ namespace MovieList
 		{
 			// Override point for customization after application launch.
 			// If not required for your application you can safely delete this method
+			ScreenWidth = UIScreen.MainScreen.Bounds.Width;
+			ScreenHeight = UIScreen.MainScreen.Bounds.Height;
 
-			Window = new UIWindow(new CGRect(0, 0, UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height));
+			Window = new UIWindow(new CGRect(0, 0, ScreenWidth, ScreenHeight));
 			Window.RootViewController = new MasterViewController();
 			Window.MakeKeyAndVisible();
 			UIView.Transition(Window, 0.3, UIViewAnimationOptions.TransitionCrossDissolve, null, null);

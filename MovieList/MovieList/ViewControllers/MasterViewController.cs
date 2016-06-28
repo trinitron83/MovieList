@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using ObjCRuntime;
+using System.Collections.Generic;
 using UIKit;
 using Foundation;
 using CoreGraphics;
@@ -23,32 +25,39 @@ namespace MovieList
 			Movies = new List<MovieListResponse>();
 		}
 
-		public override async void ViewDidLoad()
+		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-			await GetMovies();
+			GetMovies();
 
-			double rowOffset = 0;
-			double posterWidth = UIScreen.MainScreen.Bounds.Width/3;
-			double posterHeight = UIScreen.MainScreen.Bounds.Height/3;
+			double xOffset = 0, yOffset = 25;
+			double xPadding = 10, yPadding = 10;
+			double posterWidth = UIScreen.MainScreen.Bounds.Width/3 - 2*xPadding;
+			double posterHeight = UIScreen.MainScreen.Bounds.Height/3 - 2*yPadding;
 
-			var verticalScroll = new UIScrollView(new CGRect(0, 0, UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height));
-			verticalScroll.ContentSize = new CGSize(UIScreen.MainScreen.Bounds.Width, posterHeight * APIUrls.Count);
+			var verticalScroll = new UIScrollView(new CGRect(0, 0, AppDelegate.ScreenWidth, AppDelegate.ScreenHeight));
+			verticalScroll.ContentSize = new CGSize(AppDelegate.ScreenWidth, posterHeight * APIUrls.Count);
+			verticalScroll.CanCancelContentTouches = false;
 
 			foreach (MovieListResponse response in Movies)
 			{
-				var row = new UIScrollView(new CGRect(0, rowOffset, UIScreen.MainScreen.Bounds.Width, posterHeight));
-				row.ContentSize = new CGSize(UIScreen.MainScreen.Bounds.Width * response.results.Count, posterHeight);
+				var row = new UIScrollView(new CGRect(xPadding, yOffset, AppDelegate.ScreenWidth, posterHeight));
+				row.CanCancelContentTouches = true;
+				row.ContentSize = new CGSize(AppDelegate.ScreenWidth * response.results.Count, posterHeight);
 				row.PagingEnabled = true;
 
-				double posterOffset = 0;
+				xOffset = 0;
 
 				foreach (Movie m in response.results)
 				{
 					if (!string.IsNullOrEmpty(m.poster_path))
 					{
-						var poster = new UIImageView(new CGRect(posterOffset, 0, posterWidth, posterHeight));
+						var poster = new UIImageView(new CGRect(xOffset, 0, posterWidth, posterHeight));
+						poster.UserInteractionEnabled = true;
+						poster.AddGestureRecognizer(new UITapGestureRecognizer(() => {
+							PresentViewController(new MovieDetailController(m), true, null);
+						}));
 
 						var manager = SDWebImageManager.SharedManager.ImageDownloader;
 						var imageNSUrl = new NSUrl("https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + m.poster_path.Replace("\\", ""));
@@ -69,24 +78,22 @@ namespace MovieList
 						);
 
 						row.Add(poster);
-
-						posterOffset += posterWidth;
+						xOffset += posterWidth + 2*xPadding;
 					}
 				}
 
 				verticalScroll.Add(row);
-				rowOffset += posterHeight;
+				yOffset += posterHeight + 2*yPadding;
 			}
 			View.Add(verticalScroll);
 		}
 
-		async Task GetMovies()
+		void GetMovies()
 		{
 			foreach (string url in APIUrls)
 			{
-				Movies.Add(await new API().SendGetRequest<MovieListResponse>(url));
+				Movies.Add(new API().SendGetRequest<MovieListResponse>(url));
 			}
 		}
 	}
 }
-

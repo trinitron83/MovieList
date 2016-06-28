@@ -50,20 +50,20 @@ namespace MovieListPCL
 			return responseObject;
 		}
 
-		public async Task<TReturn> SendGetRequest<TReturn>(string route)
+		public TReturn SendGetRequest<TReturn>(string route)
 		{
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(route);
 			request.ContentType = "application/json";
 			request.Method = "GET";
 			string received = "";
 
-			using (var response = (HttpWebResponse)(await Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null)))
+			using (var response = (HttpWebResponse)(Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, null)).Result)
 			{
 				using (var responseStream = response.GetResponseStream())
 				{
 					using (var sr = new StreamReader(responseStream))
 					{
-						received = await sr.ReadToEndAsync();
+						received = sr.ReadToEndAsync().Result;
 					}
 				}
 			}
