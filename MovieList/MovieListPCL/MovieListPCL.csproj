@@ -39,6 +39,8 @@
     <Compile Include="Model\MovieDate.cs" />
     <Compile Include="Model\Strings.cs" />
     <Compile Include="Model\APIEndpoints.cs" />
+    <Compile Include="Model\Trailer.cs" />
+    <Compile Include="Model\TrailerResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />

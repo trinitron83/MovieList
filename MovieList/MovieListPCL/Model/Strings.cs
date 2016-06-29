@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace MovieListPCL
 {
@@ -12,6 +12,7 @@ namespace MovieListPCL
 		public static string Popular = "Popular";
 		public static string NowPlaying = "Now Playing";
 		public static string Remove = "Remove from Favorites";
+		public static List<string> MasterHeaders = new List<string> {"Top Rated", "Popular", "Now Playing"};
 	}
 }
 

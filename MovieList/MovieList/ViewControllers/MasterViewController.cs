@@ -28,19 +28,28 @@ namespace MovieList
 			//pull movie lists from api
 			await GetMovies();
 
-			double xOffset = 0, yOffset = 25;
+			double xOffset = 0, yOffset = 50;
 			double xPadding = 10, yPadding = 10;
 			double posterWidth = AppDelegate.ScreenWidth/3 - 2*xPadding;
-			double posterHeight = AppDelegate.ScreenHeight/3 - 2*yPadding;
+			double posterHeight = AppDelegate.ScreenHeight/3 - 2*yPadding - 25;
 
 			//vertical scroll to hold multiple rows of movies
 			var verticalScroll = new UIScrollView(new CGRect(0, 0, AppDelegate.ScreenWidth, AppDelegate.ScreenHeight));
 			verticalScroll.ContentSize = new CGSize(AppDelegate.ScreenWidth, posterHeight * APIUrls.Count);
 			verticalScroll.CanCancelContentTouches = false;
 
+			int headerIndex = 0;
 			foreach (MovieListResponse response in Movies)
 			{
 				//layout each row of movies
+				var rowLabel = new UILabel(new CGRect(10, yOffset - 20, AppDelegate.ScreenWidth - 30, 25));
+				rowLabel.Text = Strings.MasterHeaders[headerIndex]; headerIndex++;
+				rowLabel.Font = UIFont.FromName("Arial-BoldMT", 16);
+				rowLabel.TextColor = UIColor.White;
+				rowLabel.SizeToFit();
+
+				verticalScroll.Add(rowLabel);
+
 				var row = new UIScrollView(new CGRect(xPadding, yOffset, AppDelegate.ScreenWidth, posterHeight));
 				row.CanCancelContentTouches = true;
 				row.ContentSize = new CGSize(AppDelegate.ScreenWidth * response.results.Count, posterHeight);
@@ -82,7 +91,7 @@ namespace MovieList
 				}
 
 				verticalScroll.Add(row);
-				yOffset += posterHeight + 2*yPadding;
+				yOffset += posterHeight + 2*yPadding + 10;
 			}
 			View.Add(verticalScroll);
 		}

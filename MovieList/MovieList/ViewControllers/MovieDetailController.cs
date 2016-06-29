@@ -63,6 +63,13 @@ namespace MovieList
 			playButton.BackgroundColor = UIColor.FromRGB(146, 195, 21);
 			playButton.SetTitle(Strings.Play, UIControlState.Normal);
 
+			playButton.TouchUpInside += async (sender, e) => {
+				string trailerURL = APIEndpoints.trailerURL.Replace("##ID##", Movie.id.ToString());
+				var trailerResponse = await new API().SendGetRequest<TrailerResponse>(trailerURL);
+				if (trailerResponse.results.Count > 0)
+					UIApplication.SharedApplication.OpenUrl(new NSUrl("http://www.youtube.com/watch?v=" + trailerResponse.results[0].key + "&autoplay=1"));
+			};
+
 			var saveButton = new UIButton(new CGRect(170, 260, 160, 35));
 			saveButton.BackgroundColor = UIColor.FromRGB(208, 163, 8);
 			saveButton.SetTitle(Strings.Save, UIControlState.Normal);
@@ -104,7 +111,7 @@ namespace MovieList
 
 			var similarLabel = new UILabel(new CGRect(15, AppDelegate.ScreenHeight - 200, AppDelegate.ScreenWidth - 30, 20));
 			similarLabel.Text = Strings.Similar;
-			similarLabel.Font = UIFont.FromName("Arial", 16);
+			similarLabel.Font = UIFont.FromName("Arial-BoldMT", 16);
 			similarLabel.TextColor = UIColor.White;
 			similarLabel.SizeToFit();
 
