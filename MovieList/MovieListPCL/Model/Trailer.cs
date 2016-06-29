@@ -1,5 +1,4 @@
-﻿using System;
-namespace MovieListPCL
+﻿namespace MovieListPCL
 {
 	public class Trailer
 	{
