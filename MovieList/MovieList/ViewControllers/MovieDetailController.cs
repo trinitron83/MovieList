@@ -27,10 +27,12 @@ namespace MovieList
 		{
 			base.ViewDidLoad();
 
+			//pull similar movies from api
 			await GetSimilarMovies();
 
 			Favorites = storage.GetFavorites();
 
+			//create layout
 			var posterView = new UIImageView(new CGRect(10, 50, 150, 250));
 			var xView = new UIImageView(new CGRect(AppDelegate.ScreenWidth - 50, 20, 50, 30));
 			xView.Image = new UIImage("PS_X");
@@ -109,6 +111,7 @@ namespace MovieList
 			var manager = SDWebImageManager.SharedManager.ImageDownloader;
 			var imageNSUrl = new NSUrl("https://image.tmdb.org/t/p/w600_and_h900_bestv2/" + Movie.poster_path.Replace("\\", ""));
 
+			//download poster image asynchronously
 			manager.DownloadImage(imageNSUrl, SDWebImageDownloaderOptions.UseNSUrlCache, (s, e) =>
 				{
 				},
@@ -124,6 +127,7 @@ namespace MovieList
 				})
 			);
 
+			//layout scrollable view for similar movies
 			var similarRow = new UIScrollView(new CGRect(15, AppDelegate.ScreenHeight - 170, AppDelegate.ScreenWidth, 200));
 			similarRow.CanCancelContentTouches = true;
 			similarRow.ContentSize = new CGSize(AppDelegate.ScreenWidth * SimilarMovies.results.Count, 200);
@@ -167,6 +171,7 @@ namespace MovieList
 				}
 			}
 
+			//background
 			var blurView = new UIVisualEffectView(UIBlurEffect.FromStyle(UIBlurEffectStyle.Dark));
 			blurView.Frame = View.Frame;
 

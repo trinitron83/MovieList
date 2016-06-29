@@ -25,6 +25,7 @@ namespace MovieList
 		{
 			base.ViewDidLoad();
 
+			//pull movie lists from api
 			await GetMovies();
 
 			double xOffset = 0, yOffset = 25;
@@ -32,12 +33,14 @@ namespace MovieList
 			double posterWidth = AppDelegate.ScreenWidth/3 - 2*xPadding;
 			double posterHeight = AppDelegate.ScreenHeight/3 - 2*yPadding;
 
+			//vertical scroll to hold multiple rows of movies
 			var verticalScroll = new UIScrollView(new CGRect(0, 0, AppDelegate.ScreenWidth, AppDelegate.ScreenHeight));
 			verticalScroll.ContentSize = new CGSize(AppDelegate.ScreenWidth, posterHeight * APIUrls.Count);
 			verticalScroll.CanCancelContentTouches = false;
 
 			foreach (MovieListResponse response in Movies)
 			{
+				//layout each row of movies
 				var row = new UIScrollView(new CGRect(xPadding, yOffset, AppDelegate.ScreenWidth, posterHeight));
 				row.CanCancelContentTouches = true;
 				row.ContentSize = new CGSize(AppDelegate.ScreenWidth * response.results.Count, posterHeight);
