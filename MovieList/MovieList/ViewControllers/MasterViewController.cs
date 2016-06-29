@@ -17,24 +17,20 @@ namespace MovieList
 
 		public MasterViewController()
 		{
-			APIUrls = new List<string> { 
-				"http://api.themoviedb.org/3/movie/now_playing?api_key=ab41356b33d100ec61e6c098ecc92140&sort_by=popularity.des", 
-				"http://api.themoviedb.org/3/movie/top_rated?api_key=ab41356b33d100ec61e6c098ecc92140&sort_by=popularity.des",
-				"http://api.themoviedb.org/3/movie/popular?api_key=ab41356b33d100ec61e6c098ecc92140&sort_by=popularity.des",
-			};
+			APIUrls = new List<string> { APIEndpoints.NowPlayingURL, APIEndpoints.PopularURL, APIEndpoints.TopRatedURL };
 			Movies = new List<MovieListResponse>();
 		}
 
-		public override void ViewDidLoad()
+		public override async void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-			GetMovies();
+			await GetMovies();
 
 			double xOffset = 0, yOffset = 25;
 			double xPadding = 10, yPadding = 10;
-			double posterWidth = UIScreen.MainScreen.Bounds.Width/3 - 2*xPadding;
-			double posterHeight = UIScreen.MainScreen.Bounds.Height/3 - 2*yPadding;
+			double posterWidth = AppDelegate.ScreenWidth/3 - 2*xPadding;
+			double posterHeight = AppDelegate.ScreenHeight/3 - 2*yPadding;
 
 			var verticalScroll = new UIScrollView(new CGRect(0, 0, AppDelegate.ScreenWidth, AppDelegate.ScreenHeight));
 			verticalScroll.ContentSize = new CGSize(AppDelegate.ScreenWidth, posterHeight * APIUrls.Count);
@@ -88,11 +84,11 @@ namespace MovieList
 			View.Add(verticalScroll);
 		}
 
-		void GetMovies()
+		async Task GetMovies()
 		{
 			foreach (string url in APIUrls)
 			{
-				Movies.Add(new API().SendGetRequest<MovieListResponse>(url));
+				Movies.Add(await new API().SendGetRequest<MovieListResponse>(url));
 			}
 		}
 	}

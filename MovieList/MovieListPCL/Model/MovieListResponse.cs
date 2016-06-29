@@ -4,6 +4,8 @@ namespace MovieListPCL
 {
 	public class MovieListResponse
 	{
+		public int id { get; set; }
+
 		public int page { get; set; }
 
 		public List<Movie> results { get; set; }
